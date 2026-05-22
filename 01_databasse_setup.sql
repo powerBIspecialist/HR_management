@@ -73,3 +73,77 @@ CREATE TABLE projects (
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 );
+
+
+CREATE TABLE emp_projects (
+    id INT GENERATED ALWAYS AS IDENTITY,
+
+    emp_id INT NOT NULL,
+    project_id INT NOT NULL,
+
+    role VARCHAR(100) NOT NULL,
+    hours_worked INT NOT NULL,
+    assigned_date DATE NOT NULL,
+
+    CONSTRAINT pk_emp_projects
+        PRIMARY KEY (id),
+
+    CONSTRAINT uq_emp_project
+        UNIQUE (emp_id, project_id),
+
+    CONSTRAINT fk_emp
+        FOREIGN KEY (emp_id)
+        REFERENCES employees(emp_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_ep_project
+        FOREIGN KEY (project_id)
+        REFERENCES projects(project_id)
+        ON DELETE CASCADE
+);
+
+
+CREATE TABLE attendance (
+    id INT GENERATED ALWAYS AS IDENTITY,
+
+    emp_id INT NOT NULL,
+    work_date DATE NOT NULL,
+
+    hours NUMERIC(4,2) NOT NULL DEFAULT 8.00,
+    record_type VARCHAR(50) NOT NULL,
+    notes VARCHAR(255),
+
+    CONSTRAINT pk_attendance
+        PRIMARY KEY (id),
+
+    CONSTRAINT fk_attendance_employee
+        FOREIGN KEY (emp_id)
+        REFERENCES employees(emp_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uq_attendance_work_date
+        UNIQUE (emp_id, work_date),
+
+    CONSTRAINT chk_attendance_hours
+        CHECK (hours >= 0.00 AND hours <= 24.00)
+);
+
+
+
+CREATE TABLE salary_audit (
+    id INT GENERATED ALWAYS AS IDENTITY,
+
+    emp_id INT NOT NULL,
+    old_salary NUMERIC(10,2) NOT NULL,
+    new_salary NUMERIC(10,2) NOT NULL,
+
+    changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    changed_by VARCHAR(100) NOT NULL DEFAULT CURRENT_USER,
+
+    CONSTRAINT pk_salary_audit
+        PRIMARY KEY (id),
+
+    CONSTRAINT fk_salary_audit
+        FOREIGN KEY (emp_id)
+        REFERENCES employees(emp_id)
+);
