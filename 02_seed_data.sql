@@ -52,3 +52,110 @@ INSERT INTO employees
 ('Paul', 'Munteanu', 'paul.munteanu@company.com', '0711000024', '1999-07-07', 4500, 'Support Agent', 9, 23);
 
 
+
+  -- 03.01 INSERT seed data in single row
+INSERT INTO projects
+(project_name, description, start_date, end_date, status, budget, dept_id)
+VALUES
+('Website Redesign', 'New corporate website', '2025-01-15', '2025-06-01', 'ACTIVE', 60000, 2);
+
+  -- 03.02 INSERT seed data in  multiple rows
+INSERT INTO projects
+(project_name, description, start_date, end_date, status, budget, dept_id)
+  VALUES
+('Cloud Migration Platform', 'Migrate infrastructure to cloud (AWS/Azure)', '2025-02-01', NULL, 'ACTIVE', 200000, 2),
+('Internal ERP System', 'Company-wide ERP development', '2025-01-10', NULL, 'ACTIVE', 250000, 2),
+('AI Recommendation Engine', 'Machine learning recommendation system', '2025-03-01', NULL, 'ACTIVE', 180000, 8),
+('Customer Churn Prediction', 'Predict customer retention using ML models', '2025-04-01', NULL, 'ACTIVE', 120000, 8),
+('Security Monitoring System', 'Real-time threat detection platform', '2025-02-15', NULL, 'ACTIVE', 160000, 10),
+('Automated Billing System', 'Automate invoicing and billing processes', '2025-01-20', NULL, 'ACTIVE', 140000, 3),
+('HR System Upgrade', 'Internal HR platform upgrade', '2025-01-01', NULL, 'ACTIVE', 50000, 1),
+('Mobile App', 'Company mobile app development', '2025-02-01', NULL, 'ACTIVE', 120000, 2),
+('Payroll Automation', 'Automate salary processing', '2025-03-01', NULL, 'ACTIVE', 80000, 3);
+
+  -- 04.01 INSERT seed data in single row
+INSERT INTO emp_projects (emp_id, project_id, role, hours_worked, assigned_date)
+  VALUES
+(18, 10, 'Operations Analyst', 75, '2025-01-15');
+
+  -- 04.02 INSERT seed data in  multiple rows
+INSERT INTO emp_projects (emp_id, project_id, role, hours_worked, assigned_date)
+VALUES
+(4, 1, 'Backend Developer', 120, '2025-02-01'),
+(5, 1, 'Frontend Developer', 110, '2025-02-01'),
+(6, 1, 'DevOps Engineer', 140, '2025-02-01'),
+(4, 2, 'Backend Developer', 160, '2025-01-10'),
+(3, 2, 'Tech Lead', 180, '2025-01-10'),
+(8, 7, 'HR Specialist', 80, '2025-01-01'),
+(9, 7, 'Recruiter', 70, '2025-01-01'),
+(11, 6, 'Accountant', 90, '2025-01-20'),
+(12, 6, 'Financial Analyst', 95, '2025-01-20');
+
+  -- 05.01 INSERT seed data in single row
+INSERT INTO attendance (emp_id, work_date, hours, record_type, notes)
+  VALUES
+(12, '2026-05-05', 8.00, 'work', NULL);
+
+  -- 05.02 INSERT seed data in  multiple rows
+INSERT INTO attendance (emp_id, work_date, hours, record_type, notes)
+  VALUES
+(4, '2026-05-05', 8.00, 'work', 'Full day'),
+(5, '2026-05-05', 8.00, 'work', NULL),
+(6, '2026-05-05', 8.00, 'work', NULL),
+(8, '2026-05-05', 8.00, 'work', 'HR work'),
+(9, '2026-05-05', 8.00, 'work', 'Recruiting'),
+(11, '2026-05-05', 8.00, 'work', NULL);
+
+    -- 06.01 UPDATE with WHERE
+    -- Promote employee 4 and increase salary
+UPDATE employees
+SET job_title = 'Senior Backend Developer',
+    salary = 10000
+WHERE emp_id = 4;
+
+  -- 06.02 DELETE WITH WHERE
+  -- Delete employee with id 25
+DELETE FROM employees
+WHERE emp_id = 25;
+
+  -- 06.03 INSERT ON DUPLICATE KEY UPDATE
+  -- This query inserts a new department into the departments table.
+  -- If a record with the same id already exists, it updates the existing row instead of generating an error.
+INSERT INTO departments (dept_id, name, location, budget, active)
+VALUES (2, 'IT', 'Bucharest', 300000, 'active') AS new_data
+ON DUPLICATE KEY UPDATE
+budget = new_data.budget,
+location = new_data.location,
+active = new_data.active;
+
+  -- 06.04 TRANSACTIONS: START TRANSACTION, COMMIT
+  -- Apply salary increase and department budget increase, then save changes
+START TRANSACTION;
+
+UPDATE employees
+SET salary = salary + 1000
+WHERE dept_id = 2;
+
+UPDATE departments
+SET budget = budget + 50000
+WHERE dept_id = 2;
+
+COMMIT;
+
+  -- 06.05ROLLBACK
+  -- Cancel deletion and restore data
+START TRANSACTION;
+
+DELETE FROM employees
+WHERE dept_id = 2;
+
+  -- 06.06 If an error occurs before COMMIT, the transaction can be canceled using
+ROLLBACK;
+
+
+-- END OF SEEd DATA MODULE
+-- Total tables populated with data: 5
+-- Covers: CREATE\DROP DATABASE, USE, SHOW, SET 
+
+
+
