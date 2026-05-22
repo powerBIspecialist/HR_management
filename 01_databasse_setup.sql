@@ -39,3 +39,37 @@ CREATE TABLE employees (
         FOREIGN KEY (manager_id)
         REFERENCES employees(emp_id)
 );
+
+
+CREATE TABLE projects (
+    project_id INT GENERATED ALWAYS AS IDENTITY,
+
+    project_name VARCHAR(150) NOT NULL,
+    description TEXT,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    status VARCHAR(50) NOT NULL DEFAULT 'Active',
+    budget NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
+    dept_id INT NOT NULL,
+
+    CONSTRAINT pk_projects
+        PRIMARY KEY (project_id),
+
+    CONSTRAINT uq_project_name
+        UNIQUE (project_name),
+
+    CONSTRAINT chk_project_budget
+        CHECK (budget >= 0),
+
+    CONSTRAINT chk_project_dates
+        CHECK (
+            end_date IS NULL
+            OR end_date >= start_date
+        ),
+
+    CONSTRAINT fk_project_department
+        FOREIGN KEY (dept_id)
+        REFERENCES departments(dept_id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
